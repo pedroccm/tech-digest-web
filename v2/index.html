@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Digest Hub v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --card-hover: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-hover: #79b8ff;
+  --green: #238636;
+  --green-bg: rgba(35,134,54,.15);
+  --red: #da3633;
+  --red-bg: rgba(218,54,51,.15);
+  --shadow: 0 1px 3px rgba(0,0,0,.3);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,.4);
+  --radius: 8px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body.light {
+  --bg: #ffffff;
+  --card: #f6f8fa;
+  --card-hover: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-hover: #0550ae;
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,.1);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,.1);
+  --shadow: 0 1px 3px rgba(0,0,0,.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,.12);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background .15s, color .15s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.back-btn {
+  display: none;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  transition: all .15s;
+  flex-shrink: 0;
+}
+
+.back-btn:hover { background: var(--card); }
+.back-btn.visible { display: inline-flex; }
+
+.header-title {
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+}
+
+.icon-btn:hover { background: var(--card); }
+.icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Main content */
+.main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Search */
+.search-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  transition: border-color .15s;
+  outline: none;
+}
+
+.search-input::placeholder { color: var(--muted); }
+.search-input:focus { border-color: var(--accent); }
+
+/* Filter section */
+.filters {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  min-width: 64px;
+}
+
+.filter-btn {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--muted);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+
+.filter-btn:hover { background: var(--card); color: var(--text); }
+.filter-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.filter-btn.active-free {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.filter-btn.active-paid {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+}
+
+.date-select {
+  padding: 6px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: border-color .15s;
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+.date-select:focus { border-color: var(--accent); }
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+/* Status bar */
+.status-bar {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-bar .count {
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Article cards */
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.article-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+
+.article-card:hover {
+  background: var(--card-hover);
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+
+.article-card:active { transform: translateY(0); }
+
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.cat-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.newsletter-name {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+
+.badge-free {
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+.badge-paid {
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.card-time {
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: auto;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.fav-dot {
+  color: var(--red);
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+/* Loading */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  gap: 16px;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* Skeleton cards */
+.skeleton-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-line {
+  height: 12px;
+  background: var(--border);
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.skeleton-line.short { width: 40%; }
+.skeleton-line.medium { width: 70%; }
+.skeleton-line.long { width: 90%; margin-bottom: 0; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--muted);
+}
+
+.empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
+
+/* Article Reader */
+.reader-view { display: none; }
+.reader-view.active { display: block; }
+.list-view.hidden { display: none; }
+
+.reader-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.reader-title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+
+.reader-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.reader-meta .sep { color: var(--border); }
+
+.fav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 2px;
+  transition: transform .15s;
+}
+
+.fav-btn:hover { transform: scale(1.2); }
+
+.reader-body {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+.reader-body h1, .reader-body h2, .reader-body h3, .reader-body h4 {
+  margin: 24px 0 12px;
+  line-height: 1.3;
+}
+
+.reader-body h1 { font-size: 22px; }
+.reader-body h2 { font-size: 19px; }
+.reader-body h3 { font-size: 16px; }
+
+.reader-body p { margin-bottom: 14px; }
+
+.reader-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  margin: 12px 0;
+}
+
+.reader-body a { color: var(--accent); }
+.reader-body a:hover { text-decoration: underline; }
+
+.reader-body blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 8px 16px;
+  margin: 12px 0;
+  color: var(--muted);
+  background: var(--card);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.reader-body pre {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  overflow-x: auto;
+  font-size: 13px;
+  margin: 12px 0;
+}
+
+.reader-body code {
+  background: var(--card);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.reader-body pre code { background: none; padding: 0; }
+
+.reader-body ul, .reader-body ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.reader-body li { margin-bottom: 6px; }
+
+.reader-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.reader-body th, .reader-body td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.reader-body th { background: var(--card); font-weight: 600; }
+
+.open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 24px;
+  padding: 10px 20px;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity .15s;
+}
+
+.open-btn:hover { opacity: .9; color: #fff; }
+
+/* Scroll to top */
+.scroll-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  transition: opacity .15s, transform .15s;
+  z-index: 50;
+}
+
+.scroll-top.visible { display: flex; }
+.scroll-top:hover { transform: scale(1.1); }
+
+/* Responsive */
+@media (max-width: 480px) {
+  .header-title { font-size: 16px; }
+  .main { padding: 12px; }
+  .filter-label { min-width: auto; width: 100%; }
+  .reader-title { font-size: 20px; }
+  .card-time { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <button class="back-btn" id="backBtn" onclick="goBack()">←</button>
+    <div class="header-title" id="headerTitle">Digest Hub</div>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" id="favNavBtn" onclick="showFavorites()" title="Favorites">♡</button>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+  </div>
+</div>
+
+<div class="main">
+  <!-- List View -->
+  <div class="list-view" id="listView">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search articles by title or newsletter..." oninput="applyFilters()">
+    </div>
+
+    <div class="filters" id="filtersSection">
+      <div class="filter-group">
+        <span class="filter-label">Category</span>
+        <button class="filter-btn active" data-cat="all" onclick="setCatFilter('all')">All</button>
+        <button class="filter-btn" data-cat="tech" onclick="setCatFilter('tech')">💻 Tech</button>
+        <button class="filter-btn" data-cat="design" onclick="setCatFilter('design')">🎨 Design</button>
+        <button class="filter-btn" data-cat="business" onclick="setCatFilter('business')">💼 Business</button>
+        <button class="filter-btn" data-cat="crypto" onclick="setCatFilter('crypto')">₿ Crypto</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="filter-group">
+        <span class="filter-label">Type</span>
+        <button class="filter-btn active" data-type="all" onclick="setTypeFilter('all')">All</button>
+        <button class="filter-btn" data-type="free" onclick="setTypeFilter('free')">Free</button>
+        <button class="filter-btn" data-type="paid" onclick="setTypeFilter('paid')">Paid</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="filter-group">
+        <span class="filter-label">Date</span>
+        <select class="date-select" id="dateSelect" onchange="applyFilters()">
+          <option value="all">All dates</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="status-bar" id="statusBar"></div>
+    <div class="card-list" id="cardList"></div>
+  </div>
+
+  <!-- Reader View -->
+  <div class="reader-view" id="readerView">
+    <div class="reader-header">
+      <h1 class="reader-title" id="readerTitle"></h1>
+      <div class="reader-meta" id="readerMeta"></div>
+    </div>
+    <div class="reader-body" id="readerBody"></div>
+    <a class="open-btn" id="openOriginal" href="#" target="_blank" rel="noopener">↗ Open Original</a>
+  </div>
+</div>
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0})">↑</button>
+
+<script>
+const API = 'https://n8n.pedromarques.tech/digest';
+const FAV_KEY = 'digest-favorites-v1';
+const CAT_ICONS = { tech: '💻', design: '🎨', business: '💼', crypto: '₿' };
+
+let allArticles = [];
+let filtered = [];
+let currentView = 'list'; // list | reader | favorites
+let currentArticle = null;
+
+let filters = { cat: 'all', type: 'all', date: 'all', search: '' };
+
+// Utils
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function fmtDate(d) {
+  const [y, m, day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[+m - 1]} ${+day}, ${y}`;
+}
+
+function fmtTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toTimeString().slice(0, 5);
+}
+
+function getFavs() {
+  try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; }
+  catch { return []; }
+}
+
+function isFav(url) {
+  return getFavs().some(f => f.url === url);
+}
+
+function toggleFav(article) {
+  let favs = getFavs();
+  const idx = favs.findIndex(f => f.url === article.url);
+  if (idx >= 0) {
+    favs.splice(idx, 1);
+  } else {
+    favs.push({
+      url: article.url,
+      title: article.title,
+      newsletter: article.newsletter,
+      published_at: article.published_at,
+      paid: article.paid,
+      content_html: article.content_html,
+      category: article.category,
+      date: article.date
+    });
+  }
+  localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+}
+
+// Theme
+function initTheme() {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light') document.body.classList.add('light');
+  updateThemeBtn();
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+  updateThemeBtn();
+}
+
+function updateThemeBtn() {
+  document.getElementById('themeBtn').textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
+}
+
+// Data fetching
+async function fetchJSON(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function loadAllData() {
+  showLoading();
+  try {
+    const index = await fetchJSON(`${API}/index.json`);
+    const categories = Object.keys(index.categories || {});
+    const fetches = [];
+
+    for (const cat of categories) {
+      const dates = index.categories[cat].dates || [];
+      for (const date of dates) {
+        fetches.push(
+          fetchJSON(`${API}/${cat}/${date}.json`)
+            .then(data => ({ cat, date, data }))
+            .catch(() => null)
+        );
+      }
+    }
+
+    const results = await Promise.all(fetches);
+    allArticles = [];
+
+    for (const r of results) {
+      if (!r || !r.data || !r.data.articles) continue;
+      for (const a of r.data.articles) {
+        allArticles.push({ ...a, category: r.cat, date: r.date });
+      }
+    }
+
+    // Deduplicate by URL (keep most recent date)
+    const seen = new Set();
+    allArticles = allArticles.filter(a => {
+      if (seen.has(a.url)) return false;
+      seen.add(a.url);
+      return true;
+    });
+
+    // Sort by published_at descending
+    allArticles.sort((a, b) => {
+      const da = a.published_at ? new Date(a.published_at) : 0;
+      const db = b.published_at ? new Date(b.published_at) : 0;
+      return db - da;
+    });
+
+    populateDateFilter();
+    applyFilters();
+  } catch (e) {
+    document.getElementById('cardList').innerHTML =
+      `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load data. Please try again.</p></div>`;
+  }
+}
+
+function populateDateFilter() {
+  const dates = [...new Set(allArticles.map(a => a.date))].sort().reverse();
+  const sel = document.getElementById('dateSelect');
+  sel.innerHTML = '<option value="all">All dates</option>';
+  for (const d of dates) {
+    sel.innerHTML += `<option value="${d}">${fmtDate(d)}</option>`;
+  }
+}
+
+function showLoading() {
+  document.getElementById('statusBar').innerHTML = '';
+  let html = '';
+  for (let i = 0; i < 6; i++) {
+    html += `<div class="skeleton-card"><div class="skeleton-line short"></div><div class="skeleton-line long"></div></div>`;
+  }
+  document.getElementById('cardList').innerHTML = html;
+}
+
+// Filters
+function setCatFilter(cat) {
+  filters.cat = cat;
+  document.querySelectorAll('[data-cat]').forEach(b => {
+    b.className = 'filter-btn' + (b.dataset.cat === cat ? ' active' : '');
+  });
+  applyFilters();
+}
+
+function setTypeFilter(type) {
+  filters.type = type;
+  document.querySelectorAll('[data-type]').forEach(b => {
+    const cls = type === 'free' ? 'active-free' : type === 'paid' ? 'active-paid' : 'active';
+    b.className = 'filter-btn' + (b.dataset.type === type ? ' ' + cls : '');
+  });
+  applyFilters();
+}
+
+function syncFilterButtons() {
+  document.querySelectorAll('[data-cat]').forEach(b => {
+    b.className = 'filter-btn' + (b.dataset.cat === filters.cat ? ' active' : '');
+  });
+  document.querySelectorAll('[data-type]').forEach(b => {
+    const cls = filters.type === 'free' ? 'active-free' : filters.type === 'paid' ? 'active-paid' : 'active';
+    b.className = 'filter-btn' + (b.dataset.type === filters.type ? ' ' + cls : '');
+  });
+  document.getElementById('dateSelect').value = filters.date;
+}
+
+function applyFilters() {
+  filters.search = document.getElementById('searchInput').value.toLowerCase().trim();
+  filters.date = document.getElementById('dateSelect').value;
+
+  const source = currentView === 'favorites' ? getFavs() : allArticles;
+
+  filtered = source.filter(a => {
+    if (filters.cat !== 'all' && a.category !== filters.cat) return false;
+    if (filters.type === 'free' && a.paid) return false;
+    if (filters.type === 'paid' && !a.paid) return false;
+    if (filters.date !== 'all' && a.date !== filters.date) return false;
+    if (filters.search) {
+      const hay = `${a.title} ${a.newsletter}`.toLowerCase();
+      if (!hay.includes(filters.search)) return false;
+    }
+    return true;
+  });
+
+  syncFilterButtons();
+  renderCards();
+  window.scrollTo({ top: 0 });
+}
+
+function renderCards() {
+  const total = currentView === 'favorites' ? getFavs().length : allArticles.length;
+  const bar = document.getElementById('statusBar');
+  bar.innerHTML = `Showing <span class="count">${filtered.length}</span> of ${total} articles`;
+
+  const list = document.getElementById('cardList');
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty-state"><div class="icon">${currentView === 'favorites' ? '♡' : '📭'}</div><p>${currentView === 'favorites' ? 'No favorites yet. Heart articles to save them here.' : 'No articles match your filters.'}</p></div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map((a, i) => `
+    <div class="article-card" onclick="openArticle(${i})">
+      <div class="card-top">
+        <span class="cat-icon">${CAT_ICONS[a.category] || '📄'}</span>
+        <span class="newsletter-name">${esc(a.newsletter)}</span>
+        <span class="badge ${a.paid ? 'badge-paid' : 'badge-free'}">${a.paid ? 'PAID' : 'FREE'}</span>
+        ${isFav(a.url) ? '<span class="fav-dot">♥</span>' : ''}
+        <span class="card-time">${fmtTime(a.published_at)}</span>
+      </div>
+      <div class="card-title">${esc(a.title)}</div>
+    </div>
+  `).join('');
+}
+
+// Article reader
+function openArticle(idx) {
+  currentArticle = filtered[idx];
+  if (!currentArticle) return;
+
+  currentView = 'reader';
+  document.getElementById('listView').classList.add('hidden');
+  document.getElementById('readerView').classList.add('active');
+  document.getElementById('filtersSection').style.display = 'none';
+  document.getElementById('backBtn').classList.add('visible');
+  document.getElementById('headerTitle').textContent = esc(currentArticle.title).slice(0, 40) + (currentArticle.title.length > 40 ? '…' : '');
+
+  document.getElementById('readerTitle').textContent = currentArticle.title;
+
+  const favored = isFav(currentArticle.url);
+  document.getElementById('readerMeta').innerHTML = `
+    <span class="badge ${currentArticle.paid ? 'badge-paid' : 'badge-free'}">${currentArticle.paid ? 'PAID' : 'FREE'}</span>
+    <span class="sep">·</span>
+    <span>${esc(currentArticle.newsletter)}</span>
+    <span class="sep">·</span>
+    <span>${fmtDate(currentArticle.date)}</span>
+    <span class="sep">·</span>
+    <button class="fav-btn" onclick="toggleArticleFav()">${favored ? '❤️' : '♡'}</button>
+  `;
+
+  const body = document.getElementById('readerBody');
+  if (currentArticle.content_html && currentArticle.content_html.length > 100) {
+    body.innerHTML = currentArticle.content_html;
+  } else {
+    body.innerHTML = '<p style="color:var(--muted)">No content available. Open the original article to read it.</p>';
+  }
+
+  const link = document.getElementById('openOriginal');
+  link.href = currentArticle.url;
+
+  window.scrollTo({ top: 0 });
+}
+
+function toggleArticleFav() {
+  if (!currentArticle) return;
+  toggleFav(currentArticle);
+  // Re-render meta to update heart
+  const favored = isFav(currentArticle.url);
+  document.querySelector('.fav-btn').textContent = favored ? '❤️' : '♡';
+}
+
+// Favorites view
+function showFavorites() {
+  if (currentView === 'favorites') {
+    backToList();
+    return;
+  }
+  currentView = 'favorites';
+  document.getElementById('readerView').classList.remove('active');
+  document.getElementById('listView').classList.remove('hidden');
+  document.getElementById('filtersSection').style.display = 'none';
+  document.getElementById('backBtn').classList.add('visible');
+  document.getElementById('headerTitle').textContent = 'Favorites';
+  document.getElementById('favNavBtn').innerHTML = '✕';
+
+  // Apply filters on favs
+  const source = getFavs();
+  filters.search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+  filtered = source.filter(a => {
+    if (filters.search) {
+      const hay = `${a.title} ${a.newsletter}`.toLowerCase();
+      if (!hay.includes(filters.search)) return false;
+    }
+    return true;
+  });
+
+  renderCards();
+  window.scrollTo({ top: 0 });
+}
+
+// Navigation
+function goBack() {
+  if (currentView === 'reader') {
+    backToList();
+  } else if (currentView === 'favorites') {
+    backToList();
+  }
+}
+
+function backToList() {
+  const wasFav = currentView === 'favorites';
+  currentView = 'list';
+  document.getElementById('readerView').classList.remove('active');
+  document.getElementById('listView').classList.remove('hidden');
+  document.getElementById('filtersSection').style.display = '';
+  document.getElementById('backBtn').classList.remove('visible');
+  document.getElementById('headerTitle').textContent = 'Digest Hub';
+  document.getElementById('favNavBtn').innerHTML = '♡';
+
+  applyFilters();
+}
+
+// Scroll to top button
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('scrollTop');
+  btn.classList.toggle('visible', window.scrollY > 400);
+});
+
+// Keyboard
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (currentView !== 'list') goBack();
+  }
+});
+
+// Init
+initTheme();
+loadAllData();
+</script>
+</body>
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tech Digest</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;
+  --accent:#58a6ff;--accent-bg:rgba(88,166,255,.15);--heart:#8b949e;--heart-active:#ff6b6b;
+  --free:#238636;--paid:#da3633;--shadow:rgba(0,0,0,.3)
+}
+body.light{
+  --bg:#fff;--card:#f6f8fa;--border:#d0d7de;--text:#24292f;--muted:#57606a;
+  --accent:#0969da;--accent-bg:rgba(9,105,218,.1);--shadow:rgba(0,0,0,.1)
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;transition:background .3s,color .3s}
+#app{max-width:800px;margin:0 auto;padding:0 16px}
+
+/* Header */
+header{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border);padding:12px 0;display:flex;align-items:center;gap:8px}
+header h1{flex:1;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-btn{background:none;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:6px;border-radius:8px;line-height:1}
+.hdr-btn:hover{background:var(--accent-bg)}
+#backBtn{display:none}
+#backBtn.visible{display:inline-flex}
+#favHeart{color:var(--heart)}
+#favHeart.has{color:var(--heart-active)}
+
+/* Loading */
+.loader{display:flex;justify-content:center;padding:60px 0}
+.spinner{width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Category Grid */
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px 0}
+.cat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px 16px;text-align:center;cursor:pointer;transition:transform .2s,border-color .2s}
+.cat-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.cat-icon{font-size:36px;margin-bottom:8px}
+.cat-name{font-size:18px;font-weight:600;margin-bottom:4px}
+.cat-feeds{font-size:13px;color:var(--muted)}
+.cat-card.tech .cat-icon{filter:drop-shadow(0 0 8px #58a6ff)}
+.cat-card.design .cat-icon{filter:drop-shadow(0 0 8px #ff7b72)}
+.cat-card.business .cat-icon{filter:drop-shadow(0 0 8px #3fb950)}
+.cat-card.crypto .cat-icon{filter:drop-shadow(0 0 8px #d29922)}
+
+/* Date List */
+.date-list{display:flex;flex-direction:column;gap:10px;padding:20px 0}
+.date-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:transform .2s,border-color .2s}
+.date-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.date-card .chevron{color:var(--muted);font-size:18px}
+
+/* Filter Tabs */
+.filters{display:flex;gap:8px;margin-bottom:8px;padding-top:16px}
+.filter-btn{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.stats{display:flex;gap:20px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px}
+.stats strong{color:var(--text)}
+.stats .free{color:#3fb950}
+.stats .paid{color:#ff6b6b}
+
+/* Article Cards */
+.article-list{display:flex;flex-direction:column;gap:10px;padding-bottom:20px}
+.article-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:transform .2s,border-color .2s}
+.article-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.article-card .source{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--accent);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
+.article-card .source .fav-dot{color:var(--heart-active);font-size:14px}
+.article-card h3{font-size:14px;font-weight:500;line-height:1.4;margin-bottom:6px}
+.article-card .meta{display:flex;align-items:center;gap:8px}
+.badge{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;color:#fff}
+.badge.free{background:var(--free)}
+.badge.paid{background:var(--paid)}
+.article-card .time{font-size:12px;color:var(--muted)}
+.article-card .cat-label{font-size:12px;color:var(--muted)}
+
+/* Article Reader */
+.reader{padding:20px 0}
+.reader h1{font-size:24px;font-weight:700;line-height:1.3;margin-bottom:16px}
+.reader .reader-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:20px}
+.reader .reader-meta .newsletter{font-size:14px;font-weight:500;color:var(--accent)}
+.reader .reader-meta .date{font-size:14px;color:var(--muted)}
+.fav-btn{background:none;border:none;font-size:24px;cursor:pointer;margin-left:auto;padding:4px}
+.reader .body{line-height:1.7}
+.reader .body h1,.reader .body h2,.reader .body h3{margin:20px 0 10px;font-weight:600}
+.reader .body h2{font-size:20px}
+.reader .body h3{font-size:17px}
+.reader .body p{margin-bottom:14px}
+.reader .body a{color:var(--accent);text-decoration:underline}
+.reader .body img{max-width:100%;border-radius:8px;margin:14px 0}
+.reader .body ul,.reader .body ol{padding-left:24px;margin-bottom:14px}
+.reader .body li{margin-bottom:4px}
+.reader .body blockquote{border-left:4px solid var(--accent);padding-left:14px;margin:14px 0;color:var(--muted);font-style:italic}
+.reader .body pre{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;margin:14px 0;font-size:13px}
+.reader .body code{background:var(--card);padding:2px 6px;border-radius:4px;font-size:13px}
+.reader .body pre code{background:none;padding:0}
+.reader .body table{width:100%;border-collapse:collapse;margin:14px 0}
+.reader .body th,.reader .body td{border:1px solid var(--border);padding:8px 10px;text-align:left}
+.reader .body th{background:var(--card);font-weight:600}
+.reader .body hr{border:none;border-top:1px solid var(--border);margin:20px 0}
+.reader .body figure{margin:14px 0}
+.reader .body figcaption{text-align:center;font-size:13px;color:var(--muted);margin-top:6px}
+.no-content{text-align:center;padding:40px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--muted)}
+.open-btn{display:block;width:100%;padding:12px;margin-top:20px;background:var(--free);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;text-align:center;text-decoration:none}
+.open-btn:hover{opacity:.9}
+
+/* Favorites */
+.search-box{position:relative;margin-bottom:10px;padding-top:16px}
+.search-box input{width:100%;padding:10px 10px 10px 36px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font-size:14px;outline:none}
+.search-box input:focus{border-color:var(--accent)}
+.search-box .icon{position:absolute;left:10px;top:50%;transform:translateY(-16%);color:var(--muted);font-size:16px}
+.fav-count{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px}
+.empty-state{text-align:center;padding:40px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <button class="hdr-btn" id="backBtn" onclick="goBack()">←</button>
+    <h1 id="headerTitle">Digest Hub</h1>
+    <button class="hdr-btn" id="favBtnHeader" onclick="showFavorites()"><span id="favHeart">♡</span></button>
+    <button class="hdr-btn" id="themeToggle" onclick="toggleTheme()">🌙</button>
+  </header>
+  <div id="content"></div>
+</div>
+
+<script>
+const API = 'https://n8n.pedromarques.tech/digest';
+const CATS = {
+  tech:     { name:'Tech',     icon:'💻', feeds:155 },
+  design:   { name:'Design',   icon:'🎨', feeds:156 },
+  business: { name:'Business', icon:'💼', feeds:170 },
+  crypto:   { name:'Crypto',   icon:'₿',  feeds:161 }
+};
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+let currentView = 'home', currentCategory = null, currentDate = null, currentFilter = 'all', currentArticles = [];
+let history = [], cache = {}, loadedFavorites = [];
+
+// Utils
+function esc(s){ return s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
+function fmtDate(d){ const [y,m,dd]=d.split('-'); return `${MONTHS[parseInt(m)-1]} ${parseInt(dd)}, ${y}`; }
+function fmtTime(iso){ const d=new Date(iso); return d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}); }
+function fmtDateTime(iso){ const d=new Date(iso); return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}); }
+
+async function fetchJSON(url){
+  if(cache[url]) return cache[url];
+  const r = await fetch(url);
+  const d = await r.json();
+  cache[url] = d;
+  return d;
+}
+
+// Favorites
+function getFavs(){ try{ return JSON.parse(localStorage.getItem('digest-favorites-v1')||'[]'); }catch{ return []; } }
+function saveFavs(f){ localStorage.setItem('digest-favorites-v1',JSON.stringify(f)); updateFavIcon(); }
+function isFav(url){ return getFavs().some(f=>f.url===url); }
+function toggleFav(article,category,date,idx){
+  let favs=getFavs();
+  const exists=favs.some(f=>f.url===article.url);
+  if(exists) favs=favs.filter(f=>f.url!==article.url);
+  else favs.push({...article,category,date,index:idx});
+  saveFavs(favs);
+  return !exists;
+}
+function updateFavIcon(){ document.getElementById('favHeart').className=getFavs().length>0?'has':''; }
+
+// Navigation
+function pushHistory(state){ history.push(state); }
+function goBack(){
+  if(!history.length){ showHome(); return; }
+  const prev=history.pop();
+  if(prev.view==='home') showHome();
+  else if(prev.view==='dates'){ currentCategory=prev.category; showCategory(prev.category,true); }
+  else if(prev.view==='articles'){ currentCategory=prev.category; showArticles(prev.date,true); }
+  else if(prev.view==='favorites') showFavorites(true);
+  else showHome();
+}
+function setHeader(title,back){
+  document.getElementById('headerTitle').textContent=title;
+  document.getElementById('backBtn').className=back?'hdr-btn visible':'hdr-btn';
+}
+
+// Theme
+function initTheme(){ if(localStorage.getItem('theme')==='light'){document.body.classList.add('light');document.getElementById('themeToggle').textContent='☀️';} }
+function toggleTheme(){
+  const light=document.body.classList.toggle('light');
+  localStorage.setItem('theme',light?'light':'dark');
+  document.getElementById('themeToggle').textContent=light?'☀️':'🌙';
+}
+
+// Views
+async function showHome(){
+  currentView='home'; currentCategory=null; history=[];
+  setHeader('Digest Hub',false);
+  document.getElementById('content').innerHTML='<div class="loader"><div class="spinner"></div></div>';
+  let data;
+  try{ data=await fetchJSON(`${API}/index.json`); }catch{}
+  let html='<div class="cat-grid">';
+  for(const [key,cat] of Object.entries(CATS)){
+    const count=data?.categories?.[key]?.total;
+    html+=`<div class="cat-card ${key}" onclick="showCategory('${key}')">
+      <div class="cat-icon">${cat.icon}</div>
+      <div class="cat-name">${cat.name}</div>
+      <div class="cat-feeds">${cat.feeds} newsletters</div>
+      ${count!==undefined?`<div class="cat-feeds">${count} digests available</div>`:''}
+    </div>`;
+  }
+  html+='</div>';
+  document.getElementById('content').innerHTML=html;
+  updateFavIcon();
+}
+
+async function showCategory(category,isBack){
+  if(!isBack) pushHistory({view:currentView==='home'?'home':'dates',category:currentCategory});
+  currentView='dates'; currentCategory=category;
+  setHeader(CATS[category].name,true);
+  document.getElementById('content').innerHTML='<div class="loader"><div class="spinner"></div></div>';
+  const data=await fetchJSON(`${API}/${category}/index.json`);
+  let html='<div class="date-list">';
+  for(const date of data.dates){
+    html+=`<div class="date-card" onclick="showArticles('${date}')">
+      <span>${fmtDate(date)}</span><span class="chevron">›</span>
+    </div>`;
+  }
+  html+='</div>';
+  document.getElementById('content').innerHTML=html;
+}
+
+async function showArticles(date,isBack){
+  if(!isBack) pushHistory({view:'dates',category:currentCategory});
+  currentView='articles';
+  currentDate=date;
+  setHeader(fmtDate(date),true);
+  document.getElementById('content').innerHTML='<div class="loader"><div class="spinner"></div></div>';
+  const data=await fetchJSON(`${API}/${currentCategory}/${date}.json`);
+  currentArticles=data.articles||[];
+  currentFilter='all';
+  renderArticles(date,data);
+}
+
+function renderArticles(date,data){
+  const articles=data.articles||[];
+  const freeCount=articles.filter(a=>!a.paid).length;
+  const paidCount=articles.filter(a=>a.paid).length;
+  const filtered=currentFilter==='all'?articles:currentFilter==='free'?articles.filter(a=>!a.paid):articles.filter(a=>a.paid);
+
+  let html=`<div class="filters">
+    <button class="filter-btn ${currentFilter==='all'?'active':''}" onclick="setFilter('all','${date}')">ALL (${articles.length})</button>
+    <button class="filter-btn ${currentFilter==='free'?'active':''}" onclick="setFilter('free','${date}')">FREE (${freeCount})</button>
+    <button class="filter-btn ${currentFilter==='paid'?'active':''}" onclick="setFilter('paid','${date}')">PAID (${paidCount})</button>
+  </div>
+  <div class="stats">
+    <span>Showing <strong>${filtered.length}</strong></span>
+    <span>Free <strong class="free">${freeCount}</strong></span>
+    <span>Paid <strong class="paid">${paidCount}</strong></span>
+  </div>
+  <div class="article-list">`;
+
+  for(let i=0;i<filtered.length;i++){
+    const a=filtered[i];
+    const origIdx=articles.indexOf(a);
+    const fav=isFav(a.url);
+    html+=`<div class="article-card" onclick="showArticle('${date}',${origIdx})">
+      <div class="source"><span>${esc(a.newsletter)}</span>${fav?'<span class="fav-dot">♥</span>':''}</div>
+      <h3>${esc(a.title)}</h3>
+      <div class="meta">
+        <span class="badge ${a.paid?'paid':'free'}">${a.paid?'PAID':'FREE'}</span>
+        <span class="time">${fmtTime(a.published_at)}</span>
+      </div>
+    </div>`;
+  }
+  html+='</div>';
+  document.getElementById('content').innerHTML=html;
+}
+
+function setFilter(f,date){
+  currentFilter=f;
+  const data=cache[`${API}/${currentCategory}/${date}.json`];
+  renderArticles(date,data);
+}
+
+function showArticle(date,idx){
+  pushHistory({view:'articles',category:currentCategory,date});
+  currentView='article';
+  const data=cache[`${API}/${currentCategory}/${date}.json`];
+  const a=data.articles[idx];
+  setHeader(a.title,true);
+  const fav=isFav(a.url);
+  const hasContent=a.content_html&&a.content_html.length>100;
+
+  let html=`<div class="reader">
+    <h1>${esc(a.title)}</h1>
+    <div class="reader-meta">
+      <span class="badge ${a.paid?'paid':'free'}">${a.paid?'PAID':'FREE'}</span>
+      <span class="newsletter">${esc(a.newsletter)}</span>
+      <span class="date">${fmtDateTime(a.published_at)}</span>
+      <button class="fav-btn" id="favToggle" onclick="toggleArticleFav('${esc(a.url)}','${currentCategory}','${date}',${idx})">${fav?'❤️':'🤍'}</button>
+    </div>
+    ${hasContent?`<div class="body">${a.content_html}</div>`:'<div class="no-content">No content available. Open the original article to read it.</div>'}
+    <a class="open-btn" href="${esc(a.url)}" target="_blank" rel="noopener">↗ Open Original</a>
+  </div>`;
+  document.getElementById('content').innerHTML=html;
+}
+
+function toggleArticleFav(url,category,date,idx){
+  const data=cache[`${API}/${category}/${date}.json`];
+  const a=data.articles[idx];
+  const nowFav=toggleFav(a,category,date,idx);
+  document.getElementById('favToggle').textContent=nowFav?'❤️':'🤍';
+}
+
+async function showFavorites(isBack){
+  if(!isBack) pushHistory({view:currentView,category:currentCategory,date:currentDate});
+  currentView='favorites';
+  setHeader('Favorites',true);
+  const favs=getFavs();
+
+  let html=`<div class="search-box"><span class="icon">🔍</span><input type="text" placeholder="Search favorites..." oninput="filterFavorites(this.value)"></div>
+    <div class="fav-count">${favs.length} ${favs.length===1?'favorite':'favorites'}</div>`;
+
+  if(!favs.length){
+    html+='<div class="empty-state">No favorites yet. Tap the heart on any article to save it here.</div>';
+  } else {
+    loadedFavorites=[...favs].sort((a,b)=>new Date(b.published_at)-new Date(a.published_at));
+    html+='<div class="article-list" id="favList">';
+    html+=renderFavCards(loadedFavorites);
+    html+='</div>';
+  }
+  document.getElementById('content').innerHTML=html;
+}
+
+function renderFavCards(list){
+  let html='';
+  for(const f of list){
+    const catName=CATS[f.category]?.name||f.category;
+    html+=`<div class="article-card" onclick="openFavArticle('${f.category}','${f.date}',${f.index})">
+      <div class="source"><span>${esc(f.newsletter)}</span><span class="fav-dot">♥</span></div>
+      <h3>${esc(f.title)}</h3>
+      <div class="meta">
+        <span class="badge ${f.paid?'paid':'free'}">${f.paid?'PAID':'FREE'}</span>
+        <span class="time">${fmtTime(f.published_at)}</span>
+        <span class="cat-label">· ${catName}</span>
+      </div>
+    </div>`;
+  }
+  return html;
+}
+
+function filterFavorites(q){
+  q=q.toLowerCase();
+  const filtered=q?loadedFavorites.filter(f=>f.title.toLowerCase().includes(q)||f.newsletter.toLowerCase().includes(q)):loadedFavorites;
+  document.getElementById('favList').innerHTML=renderFavCards(filtered);
+}
+
+async function openFavArticle(category,date,idx){
+  currentCategory=category;
+  try{ await fetchJSON(`${API}/${category}/${date}.json`); }catch{}
+  showArticle(date,idx);
+}
+
+// Keyboard back
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') goBack(); });
+
+// Init
+initTheme();
+showHome();
+</script>
+</body>
+</html>

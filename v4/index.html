@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digest Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #FFFCF5;
+  --bg-secondary: #FFF6E5;
+  --card: #FFFFFF;
+  --card-hover: #FFFAF0;
+  --border: #F0E6D3;
+  --input: #F0E6D3;
+  --text: #1A1A1A;
+  --text-secondary: #8C7E6A;
+  --muted: #FFF3E0;
+  --muted-fg: #8C7E6A;
+  --accent: #F5A623;
+  --accent-light: #FFF3E0;
+  --accent-fg: #1A1A1A;
+  --primary: #1A1A1A;
+  --primary-fg: #FFFCF5;
+  --green: #2E7D32;
+  --green-bg: rgba(46, 125, 50, .1);
+  --red: #E65100;
+  --red-bg: rgba(230, 81, 0, .08);
+  --ring: #F5A623;
+  --sidebar-bg: #FFFCF5;
+  --sidebar-border: #F0E6D3;
+  --sidebar-active: #FFF3E0;
+  --shadow-sm: 0 1px 2px rgba(26, 26, 26, .04);
+  --shadow: 0 2px 8px rgba(26, 26, 26, .06), 0 1px 2px rgba(26, 26, 26, .04);
+  --shadow-lg: 0 4px 16px rgba(26, 26, 26, .08);
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 100px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+}
+
+.dark {
+  --bg: #1A1714;
+  --bg-secondary: #242018;
+  --card: #242018;
+  --card-hover: #2E2A22;
+  --border: #3D362B;
+  --input: #3D362B;
+  --text: #F5F0E8;
+  --text-secondary: #A69882;
+  --muted: #2E2A22;
+  --muted-fg: #A69882;
+  --accent: #F5A623;
+  --accent-light: rgba(245, 166, 35, .12);
+  --accent-fg: #1A1A1A;
+  --primary: #F5F0E8;
+  --primary-fg: #1A1714;
+  --green: #66BB6A;
+  --green-bg: rgba(102, 187, 106, .12);
+  --red: #FF8A65;
+  --red-bg: rgba(255, 138, 101, .12);
+  --ring: #F5A623;
+  --sidebar-bg: #1A1714;
+  --sidebar-border: #3D362B;
+  --sidebar-active: #2E2A22;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .2);
+  --shadow: 0 2px 8px rgba(0, 0, 0, .2), 0 1px 2px rgba(0, 0, 0, .15);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, .3);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+  transition: background .2s, color .2s;
+  display: flex;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ─── Sidebar ─── */
+.sidebar {
+  width: 272px;
+  min-width: 272px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 20;
+}
+
+.sidebar-header {
+  padding: 24px 20px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-logo {
+  width: 36px;
+  height: 36px;
+  background: var(--accent);
+  color: #1A1A1A;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.sidebar-brand {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -.2px;
+  color: var(--text);
+}
+
+.sidebar-section {
+  padding: 4px 12px;
+}
+
+.sidebar-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--muted-fg);
+  padding: 12px 12px 6px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted-fg);
+  cursor: pointer;
+  transition: all .15s;
+  user-select: none;
+}
+
+.sidebar-item:hover {
+  background: var(--sidebar-active);
+  color: var(--text);
+}
+
+.sidebar-item.active {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.sidebar-item .count {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-fg);
+  background: var(--muted);
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  min-width: 32px;
+  text-align: center;
+}
+
+.sidebar-item.active .count {
+  background: var(--accent);
+  color: #1A1A1A;
+}
+
+.sidebar-spacer { flex: 1; }
+
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--sidebar-border);
+}
+
+.sidebar-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--muted-fg);
+}
+
+.stat-row .val {
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Main ─── */
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Top Bar ─── */
+.topbar {
+  height: 64px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  gap: 12px;
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar-search {
+  position: relative;
+  flex: 1;
+  max-width: 420px;
+}
+
+.topbar-search svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted-fg);
+  width: 16px;
+  height: 16px;
+}
+
+.topbar-search input {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px 0 40px;
+  background: var(--bg-secondary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  outline: none;
+  transition: all .2s;
+}
+
+.topbar-search input::placeholder { color: var(--muted-fg); }
+.topbar-search input:focus {
+  border-color: var(--accent);
+  background: var(--card);
+  box-shadow: 0 0 0 3px rgba(245, 166, 35, .15);
+}
+
+.topbar-kbd {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  font-family: var(--font);
+  color: var(--muted-fg);
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.topbar-spacer { flex: 1; }
+
+.topbar-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 16px;
+  transition: all .15s;
+}
+
+.topbar-btn:hover { background: var(--accent-light); border-color: var(--accent); }
+.topbar-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ─── Content ─── */
+.content {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+.content-header {
+  margin-bottom: 28px;
+}
+
+.content-title {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: -.3px;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.content-subtitle {
+  font-size: 15px;
+  color: var(--muted-fg);
+  margin-top: 6px;
+}
+
+/* ─── Filter Bar ─── */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  height: 36px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--muted-fg);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+}
+
+.filter-pill:hover { background: var(--accent-light); color: var(--text); border-color: var(--accent); }
+.filter-pill.active { background: var(--primary); color: var(--primary-fg); border-color: var(--primary); }
+.filter-pill.active-green { background: var(--green); color: #fff; border-color: var(--green); }
+.filter-pill.active-orange { background: var(--accent); color: #1A1A1A; border-color: var(--accent); font-weight: 600; }
+
+.filter-sep {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  margin: 0 6px;
+}
+
+.filter-select {
+  height: 36px;
+  padding: 0 32px 0 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238C7E6A' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: border-color .2s;
+}
+
+.filter-select:focus { border-color: var(--accent); }
+
+.filter-count {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--muted-fg);
+}
+
+.filter-count strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ─── Article Grid ─── */
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.article-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  cursor: pointer;
+  transition: all .25s cubic-bezier(.4,0,.2,1);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+}
+
+.article-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+  transform: translateY(-3px);
+}
+
+.article-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.article-card:hover::before { opacity: 1; }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-cat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.card-type-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.badge-free { background: var(--green-bg); color: var(--green); }
+.badge-paid { background: var(--red-bg); color: var(--red); }
+
+.card-fav {
+  color: #E65100;
+  font-size: 13px;
+}
+
+.card-time {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--muted-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-newsletter {
+  font-size: 13px;
+  color: var(--muted-fg);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-newsletter .dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ─── Loading ─── */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.skeleton-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skel { background: var(--muted); border-radius: var(--radius-pill); }
+.skel-sm { height: 22px; width: 80px; }
+.skel-md { height: 16px; width: 60%; }
+.skel-lg { height: 20px; width: 90%; }
+.skel-row { display: flex; gap: 8px; }
+
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+
+/* ─── Empty ─── */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+.empty-state h3 {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+.empty-state p { font-size: 14px; color: var(--muted-fg); }
+
+/* ─── Reader View ─── */
+.reader-view {
+  display: none;
+  max-width: 760px;
+}
+
+.reader-view.active { display: block; }
+.list-view.hidden { display: none; }
+
+.reader-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted-fg);
+  margin-bottom: 28px;
+}
+
+.reader-breadcrumb button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0;
+  transition: color .15s;
+}
+
+.reader-breadcrumb button:hover { color: var(--text); }
+
+.reader-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.reader-card-header {
+  padding: 32px 36px;
+  border-bottom: 1px solid var(--border);
+}
+
+.reader-title {
+  font-family: var(--font-serif);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -.2px;
+  margin-bottom: 18px;
+}
+
+.reader-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--muted-fg);
+}
+
+.reader-meta .sep { color: var(--border); }
+
+.fav-btn {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 12px;
+  transition: all .15s;
+}
+
+.fav-btn:hover { background: var(--accent-light); border-color: var(--accent); }
+
+.reader-card-body {
+  padding: 36px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+.reader-card-body h1, .reader-card-body h2, .reader-card-body h3, .reader-card-body h4 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  margin: 32px 0 14px;
+  line-height: 1.3;
+}
+
+.reader-card-body h1 { font-size: 24px; }
+.reader-card-body h2 { font-size: 21px; }
+.reader-card-body h3 { font-size: 18px; }
+
+.reader-card-body p { margin-bottom: 18px; }
+
+.reader-card-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  margin: 18px 0;
+}
+
+.reader-card-body a { color: var(--accent); font-weight: 500; }
+.reader-card-body a:hover { text-decoration: underline; }
+
+.reader-card-body blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 14px 24px;
+  margin: 18px 0;
+  color: var(--muted-fg);
+  background: var(--accent-light);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-style: italic;
+}
+
+.reader-card-body pre {
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  overflow-x: auto;
+  font-size: 13px;
+  margin: 18px 0;
+}
+
+.reader-card-body code {
+  background: var(--muted);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.reader-card-body pre code { background: none; padding: 0; }
+
+.reader-card-body ul, .reader-card-body ol {
+  margin: 18px 0;
+  padding-left: 24px;
+}
+
+.reader-card-body li { margin-bottom: 10px; }
+
+.reader-card-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  font-size: 14px;
+}
+
+.reader-card-body th, .reader-card-body td {
+  border: 1px solid var(--border);
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.reader-card-body th { background: var(--muted); font-weight: 600; }
+
+.reader-card-footer {
+  padding: 24px 36px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--primary);
+  color: var(--primary-fg);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .2s;
+}
+
+.btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+
+/* ─── Mobile sidebar toggle ─── */
+.mobile-toggle {
+  display: none;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 23, 20, .5);
+  z-index: 15;
+  backdrop-filter: blur(4px);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -272px;
+    transition: left .25s cubic-bezier(.4,0,.2,1);
+    z-index: 20;
+  }
+
+  .sidebar.open { left: 0; }
+  .sidebar-overlay.open { display: block; }
+  .mobile-toggle { display: flex; }
+
+  .content { padding: 20px; }
+  .content-title { font-size: 28px; }
+
+  .article-grid,
+  .skeleton-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reader-card-header,
+  .reader-card-body,
+  .reader-card-footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .reader-title { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar Overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">D</div>
+    <span class="sidebar-brand">Digest Hub</span>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Categories</div>
+    <div class="sidebar-item active" data-cat="all" onclick="setCat('all')">
+      All Articles <span class="count" id="countAll">-</span>
+    </div>
+    <div class="sidebar-item" data-cat="tech" onclick="setCat('tech')">
+      Tech <span class="count" id="countTech">-</span>
+    </div>
+    <div class="sidebar-item" data-cat="design" onclick="setCat('design')">
+      Design <span class="count" id="countDesign">-</span>
+    </div>
+    <div class="sidebar-item" data-cat="business" onclick="setCat('business')">
+      Business <span class="count" id="countBusiness">-</span>
+    </div>
+    <div class="sidebar-item" data-cat="crypto" onclick="setCat('crypto')">
+      Crypto <span class="count" id="countCrypto">-</span>
+    </div>
+
+    <div class="sidebar-label" style="margin-top:12px">Library</div>
+    <div class="sidebar-item" data-cat="favorites" onclick="setCat('favorites')">
+      Favorites <span class="count" id="countFav">-</span>
+    </div>
+  </div>
+
+  <div class="sidebar-spacer"></div>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-stats">
+      <div class="stat-row"><span>Free articles</span><span class="val" id="statFree">-</span></div>
+      <div class="stat-row"><span>Paid articles</span><span class="val" id="statPaid">-</span></div>
+      <div class="stat-row"><span>Newsletters</span><span class="val" id="statNewsletters">-</span></div>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <!-- Top Bar -->
+  <header class="topbar">
+    <button class="mobile-toggle" onclick="toggleSidebar()">&#9776;</button>
+    <div class="topbar-search">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="searchInput" placeholder="Search articles..." oninput="applyFilters()">
+      <span class="topbar-kbd">&#8984;K</span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <button class="topbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">&#x1F319;</button>
+  </header>
+
+  <!-- Content -->
+  <div class="content" id="contentArea">
+    <!-- List View -->
+    <div class="list-view" id="listView">
+      <div class="content-header">
+        <h1 class="content-title" id="pageTitle">All Articles</h1>
+        <p class="content-subtitle" id="pageSubtitle">Browse the latest newsletters from all categories</p>
+      </div>
+
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-pill active" data-type="all" onclick="setType('all')">All</button>
+        <button class="filter-pill" data-type="free" onclick="setType('free')">Free</button>
+        <button class="filter-pill" data-type="paid" onclick="setType('paid')">Paid</button>
+        <span class="filter-sep"></span>
+        <select class="filter-select" id="dateSelect" onchange="applyFilters()">
+          <option value="all">All dates</option>
+        </select>
+        <span class="filter-count" id="filterCount"></span>
+      </div>
+
+      <div class="article-grid" id="articleGrid"></div>
+    </div>
+
+    <!-- Reader View -->
+    <div class="reader-view" id="readerView">
+      <div class="reader-breadcrumb">
+        <button onclick="goBack()">&larr; Back</button>
+        <span>/</span>
+        <span id="readerBreadcrumb">Article</span>
+      </div>
+      <div class="reader-card">
+        <div class="reader-card-header">
+          <h1 class="reader-title" id="readerTitle"></h1>
+          <div class="reader-meta" id="readerMeta"></div>
+        </div>
+        <div class="reader-card-body" id="readerBody"></div>
+        <div class="reader-card-footer">
+          <a class="btn-primary" id="openOriginal" href="#" target="_blank" rel="noopener">&nearr; Open Original</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://n8n.pedromarques.tech/digest';
+const FAV_KEY = 'digest-favorites-v1';
+const CAT_ICONS = { tech: '', design: '', business: '', crypto: '' };
+const CAT_LABELS = { all: 'All Articles', tech: 'Tech', design: 'Design', business: 'Business', crypto: 'Crypto', favorites: 'Favorites' };
+const CAT_SUBS = {
+  all: 'Browse the latest newsletters from all categories',
+  tech: 'Technology, AI, software engineering & startups',
+  design: 'UI/UX, product design & creative tools',
+  business: 'Finance, strategy & entrepreneurship',
+  crypto: 'Blockchain, DeFi & digital assets',
+  favorites: 'Your saved articles'
+};
+
+let allArticles = [];
+let filtered = [];
+let currentView = 'list';
+let currentArticle = null;
+let filters = { cat: 'all', type: 'all', date: 'all', search: '' };
+
+// Utils
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function fmtDate(d) {
+  const [y, m, day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[+m - 1]} ${+day}, ${y}`;
+}
+function fmtTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toTimeString().slice(0, 5);
+}
+
+// Favorites
+function getFavs() { try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { return []; } }
+function isFav(url) { return getFavs().some(f => f.url === url); }
+function toggleFav(article) {
+  let favs = getFavs();
+  const idx = favs.findIndex(f => f.url === article.url);
+  if (idx >= 0) favs.splice(idx, 1);
+  else favs.push({ url: article.url, title: article.title, newsletter: article.newsletter, published_at: article.published_at, paid: article.paid, content_html: article.content_html, category: article.category, date: article.date });
+  localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+  updateFavCount();
+}
+function updateFavCount() {
+  document.getElementById('countFav').textContent = getFavs().length;
+}
+
+// Theme
+function initTheme() {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'dark') document.documentElement.classList.add('dark');
+  else if (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
+  updateThemeBtn();
+}
+function toggleTheme() {
+  document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+  updateThemeBtn();
+}
+function updateThemeBtn() {
+  document.getElementById('themeBtn').textContent = document.documentElement.classList.contains('dark') ? '\u2600\uFE0F' : '\uD83C\uDF19';
+}
+
+// Mobile sidebar
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+
+// Data
+async function fetchJSON(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function loadAllData() {
+  showLoading();
+  try {
+    const index = await fetchJSON(`${API}/index.json`);
+    const categories = Object.keys(index.categories || {});
+    const fetches = [];
+    for (const cat of categories) {
+      for (const date of (index.categories[cat].dates || [])) {
+        fetches.push(fetchJSON(`${API}/${cat}/${date}.json`).then(data => ({ cat, date, data })).catch(() => null));
+      }
+    }
+    const results = await Promise.all(fetches);
+    allArticles = [];
+    for (const r of results) {
+      if (!r?.data?.articles) continue;
+      for (const a of r.data.articles) allArticles.push({ ...a, category: r.cat, date: r.date });
+    }
+    // Deduplicate
+    const seen = new Set();
+    allArticles = allArticles.filter(a => { if (seen.has(a.url)) return false; seen.add(a.url); return true; });
+    // Sort
+    allArticles.sort((a, b) => (b.published_at ? new Date(b.published_at) : 0) - (a.published_at ? new Date(a.published_at) : 0));
+
+    updateSidebarCounts();
+    populateDateFilter();
+    applyFilters();
+  } catch (e) {
+    document.getElementById('articleGrid').innerHTML = '<div class="empty-state"><div class="icon">\u26A0\uFE0F</div><h3>Failed to load</h3><p>Could not fetch articles. Please try again.</p></div>';
+  }
+}
+
+function updateSidebarCounts() {
+  document.getElementById('countAll').textContent = allArticles.length;
+  const cats = { tech: 0, design: 0, business: 0, crypto: 0 };
+  let free = 0, paid = 0;
+  const newsletters = new Set();
+  for (const a of allArticles) {
+    if (cats[a.category] !== undefined) cats[a.category]++;
+    a.paid ? paid++ : free++;
+    newsletters.add(a.newsletter);
+  }
+  document.getElementById('countTech').textContent = cats.tech;
+  document.getElementById('countDesign').textContent = cats.design;
+  document.getElementById('countBusiness').textContent = cats.business;
+  document.getElementById('countCrypto').textContent = cats.crypto;
+  document.getElementById('statFree').textContent = free;
+  document.getElementById('statPaid').textContent = paid;
+  document.getElementById('statNewsletters').textContent = newsletters.size;
+  updateFavCount();
+}
+
+function populateDateFilter() {
+  const dates = [...new Set(allArticles.map(a => a.date))].sort().reverse();
+  const sel = document.getElementById('dateSelect');
+  sel.innerHTML = '<option value="all">All dates</option>';
+  for (const d of dates) sel.innerHTML += `<option value="${d}">${fmtDate(d)}</option>`;
+}
+
+function showLoading() {
+  const grid = document.getElementById('articleGrid');
+  grid.innerHTML = Array.from({ length: 8 }, () => `
+    <div class="skeleton-card">
+      <div class="skel-row"><div class="skel skel-sm"></div><div class="skel skel-sm" style="width:50px"></div></div>
+      <div class="skel skel-lg"></div>
+      <div class="skel skel-md"></div>
+    </div>
+  `).join('');
+}
+
+// Filters
+function setCat(cat) {
+  filters.cat = cat;
+  document.querySelectorAll('.sidebar-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.cat === cat);
+  });
+
+  document.getElementById('pageTitle').textContent = CAT_LABELS[cat] || 'Articles';
+  document.getElementById('pageSubtitle').textContent = CAT_SUBS[cat] || '';
+
+  // Show/hide filter bar for favorites
+  document.getElementById('filterBar').style.display = cat === 'favorites' ? 'none' : '';
+
+  // Close sidebar on mobile
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+
+  if (currentView === 'reader') goBack();
+  applyFilters();
+}
+
+function setType(type) {
+  filters.type = type;
+  syncTypePills();
+  applyFilters();
+}
+
+function syncTypePills() {
+  document.querySelectorAll('[data-type]').forEach(b => {
+    b.className = 'filter-pill';
+    if (b.dataset.type === filters.type) {
+      b.classList.add(filters.type === 'free' ? 'active-green' : filters.type === 'paid' ? 'active-orange' : 'active');
+    }
+  });
+}
+
+function applyFilters() {
+  filters.search = document.getElementById('searchInput').value.toLowerCase().trim();
+  filters.date = document.getElementById('dateSelect').value;
+
+  const source = filters.cat === 'favorites' ? getFavs() : allArticles;
+
+  filtered = source.filter(a => {
+    if (filters.cat !== 'all' && filters.cat !== 'favorites' && a.category !== filters.cat) return false;
+    if (filters.type === 'free' && a.paid) return false;
+    if (filters.type === 'paid' && !a.paid) return false;
+    if (filters.date !== 'all' && a.date !== filters.date) return false;
+    if (filters.search && !`${a.title} ${a.newsletter}`.toLowerCase().includes(filters.search)) return false;
+    return true;
+  });
+
+  syncTypePills();
+  renderGrid();
+}
+
+function renderGrid() {
+  const total = filters.cat === 'favorites' ? getFavs().length : allArticles.length;
+  document.getElementById('filterCount').innerHTML = `<strong>${filtered.length}</strong> of ${total} articles`;
+
+  const grid = document.getElementById('articleGrid');
+  if (!filtered.length) {
+    const isFavView = filters.cat === 'favorites';
+    grid.innerHTML = `<div class="empty-state"><div class="icon">${isFavView ? '\u2764\uFE0F' : '\uD83D\uDCED'}</div><h3>${isFavView ? 'No favorites yet' : 'No results'}</h3><p>${isFavView ? 'Click the heart on articles to save them here.' : 'Try adjusting your filters or search.'}</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((a, i) => `
+    <div class="article-card" onclick="openArticle(${i})">
+      <div class="card-header">
+        <span class="card-cat-badge">${(a.category || '').charAt(0).toUpperCase() + (a.category || '').slice(1)}</span>
+        <span class="card-type-badge ${a.paid ? 'badge-paid' : 'badge-free'}">${a.paid ? 'Paid' : 'Free'}</span>
+        ${isFav(a.url) ? '<span class="card-fav">\u2665</span>' : ''}
+        <span class="card-time">${fmtTime(a.published_at)}</span>
+      </div>
+      <div class="card-title">${esc(a.title)}</div>
+      <div class="card-newsletter">
+        <span>${esc(a.newsletter)}</span>
+        ${a.date ? `<span class="dot"></span><span>${fmtDate(a.date)}</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// Reader
+function openArticle(idx) {
+  currentArticle = filtered[idx];
+  if (!currentArticle) return;
+  currentView = 'reader';
+  document.getElementById('listView').classList.add('hidden');
+  document.getElementById('readerView').classList.add('active');
+
+  const cat = (currentArticle.category || '').charAt(0).toUpperCase() + (currentArticle.category || '').slice(1);
+  document.getElementById('readerBreadcrumb').textContent = cat;
+  document.getElementById('readerTitle').textContent = currentArticle.title;
+
+  const fav = isFav(currentArticle.url);
+  document.getElementById('readerMeta').innerHTML = `
+    <span class="card-type-badge ${currentArticle.paid ? 'badge-paid' : 'badge-free'}">${currentArticle.paid ? 'Paid' : 'Free'}</span>
+    <span class="sep">\u00B7</span>
+    <span>${esc(currentArticle.newsletter)}</span>
+    <span class="sep">\u00B7</span>
+    <span>${fmtDate(currentArticle.date)}</span>
+    <span class="sep">\u00B7</span>
+    <button class="fav-btn" onclick="toggleArticleFav()">${fav ? '\u2764\uFE0F' : '\u2661'}</button>
+  `;
+
+  const body = document.getElementById('readerBody');
+  body.innerHTML = (currentArticle.content_html && currentArticle.content_html.length > 100)
+    ? currentArticle.content_html
+    : '<p style="color:var(--muted-fg)">No content available. Open the original article to read it.</p>';
+
+  document.getElementById('openOriginal').href = currentArticle.url;
+  document.getElementById('contentArea').scrollTo({ top: 0 });
+}
+
+function toggleArticleFav() {
+  if (!currentArticle) return;
+  toggleFav(currentArticle);
+  document.querySelector('.fav-btn').textContent = isFav(currentArticle.url) ? '\u2764\uFE0F' : '\u2661';
+}
+
+function goBack() {
+  currentView = 'list';
+  document.getElementById('readerView').classList.remove('active');
+  document.getElementById('listView').classList.remove('hidden');
+  applyFilters();
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && currentView === 'reader') goBack();
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
+  }
+});
+
+// Init
+initTheme();
+loadAllData();
+</script>
+</body>
+</html>
