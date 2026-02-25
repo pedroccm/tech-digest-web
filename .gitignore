@@ -38,3 +38,6 @@ next-env.d.ts
 # playwright screenshots
 *.png
 .playwright-mcp/
+
+# Local Netlify folder
+.netlify
