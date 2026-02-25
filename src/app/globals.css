@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 212 13% 16%;
+    --card: 210 17% 98%;
+    --card-foreground: 212 13% 16%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 212 13% 16%;
+    --primary: 212 100% 44%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 17% 95%;
+    --secondary-foreground: 212 13% 16%;
+    --muted: 210 17% 95%;
+    --muted-foreground: 212 7% 36%;
+    --accent: 210 17% 95%;
+    --accent-foreground: 212 13% 16%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 212 12% 82%;
+    --input: 212 12% 82%;
+    --ring: 212 100% 44%;
+    --radius: 0.75rem;
+
+    --heart-active: 0 100% 71%;
+  }
+
+  .dark {
+    --background: 216 28% 7%;
+    --foreground: 213 27% 93%;
+    --card: 215 22% 11%;
+    --card-foreground: 213 27% 93%;
+    --popover: 215 22% 11%;
+    --popover-foreground: 213 27% 93%;
+    --primary: 212 100% 67%;
+    --primary-foreground: 216 28% 7%;
+    --secondary: 214 14% 20%;
+    --secondary-foreground: 213 27% 93%;
+    --muted: 214 14% 20%;
+    --muted-foreground: 212 9% 58%;
+    --accent: 214 14% 20%;
+    --accent-foreground: 213 27% 93%;
+    --destructive: 0 73% 53%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 11% 27%;
+    --input: 214 11% 27%;
+    --ring: 212 100% 67%;
+
+    --heart-active: 0 100% 71%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Article body styles for raw HTML content */
+.article-body {
+  @apply leading-relaxed;
+}
+
+.article-body h1,
+.article-body h2,
+.article-body h3,
+.article-body h4,
+.article-body h5,
+.article-body h6 {
+  @apply mt-6 mb-3 font-semibold;
+}
+
+.article-body h1 { @apply text-2xl; }
+.article-body h2 { @apply text-xl; }
+.article-body h3 { @apply text-lg; }
+
+.article-body p {
+  @apply mb-4;
+}
+
+.article-body a {
+  @apply text-primary underline underline-offset-2;
+}
+
+.article-body img {
+  @apply my-4 max-w-full rounded-lg;
+}
+
+.article-body ul,
+.article-body ol {
+  @apply mb-4 pl-6;
+}
+
+.article-body ul { @apply list-disc; }
+.article-body ol { @apply list-decimal; }
+
+.article-body li {
+  @apply mb-1;
+}
+
+.article-body blockquote {
+  @apply my-4 border-l-4 border-primary/50 pl-4 italic text-muted-foreground;
+}
+
+.article-body pre {
+  @apply my-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm;
+}
+
+.article-body code {
+  @apply rounded bg-muted px-1.5 py-0.5 text-sm;
+}
+
+.article-body pre code {
+  @apply bg-transparent p-0;
+}
+
+.article-body table {
+  @apply my-4 w-full border-collapse;
+}
+
+.article-body th,
+.article-body td {
+  @apply border border-border px-3 py-2 text-left;
+}
+
+.article-body th {
+  @apply bg-muted font-semibold;
+}
+
+.article-body hr {
+  @apply my-6 border-border;
+}
+
+.article-body figure {
+  @apply my-4;
+}
+
+.article-body figcaption {
+  @apply mt-2 text-center text-sm text-muted-foreground;
+}
